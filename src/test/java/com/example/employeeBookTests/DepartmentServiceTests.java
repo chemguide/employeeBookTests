@@ -1,5 +1,6 @@
 package com.example.employeeBookTests;
 
+import com.example.employeeBookTests.Exceptions.DepartmentIsEmptyException;
 import com.example.employeeBookTests.Services.DepartmentService;
 import com.example.employeeBookTests.Services.DepartmentServiceImpl;
 import com.example.employeeBookTests.Services.EmployeeService;
@@ -31,7 +32,7 @@ public class DepartmentServiceTests {
             new Employee("Pavel", "Ivanov", 1, 4000),
             new Employee("Michail", "Ivanov", 1, 5000));
 
-    private final int id = 1;
+    private final int realDepartment = 1, ghostDepartment = 2;
 
 
     @Mock
@@ -40,32 +41,51 @@ public class DepartmentServiceTests {
     @InjectMocks
     private DepartmentServiceImpl departmentService;
 
-    @BeforeEach
-    public void getList() {
-        when(employeeServiceMock.getAllEmployeeByDepartment(id)).thenReturn(employeeList);
-    }
-
 
     @Test
     public void shouldReturnCorrectSumByDepartment() {
+        when(employeeServiceMock.getAllEmployeeByDepartment(realDepartment)).thenReturn(employeeList);
         double expected = 0;
         for (Employee employee : employeeList) {
             expected += employee.getSalary();
         }
-        Assertions.assertEquals(expected, departmentService.getSumByDepartment(id));
+        Assertions.assertEquals(expected, departmentService.getSumByDepartment(realDepartment));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenDepartmentNotExistWhenCalculatingSum() {
+        when(employeeServiceMock.getAllEmployeeByDepartment(ghostDepartment)).thenThrow(DepartmentIsEmptyException.class);
+        Assertions.assertThrows(DepartmentIsEmptyException.class,
+                () -> departmentService.getSumByDepartment(ghostDepartment));
     }
 
 
     @Test
     public void shouldReturnCorrectMinByDepartment() {
+        when(employeeServiceMock.getAllEmployeeByDepartment(realDepartment)).thenReturn(employeeList);
         Employee expected = new Employee("Ivan", "Ivanov", 1, 1000);
-        Assertions.assertEquals(expected, departmentService.getMinByDepartment(id));
+        Assertions.assertEquals(expected, departmentService.getMinByDepartment(realDepartment));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenDepartmentNotExistWhenCalculatingMin() {
+        when(employeeServiceMock.getAllEmployeeByDepartment(ghostDepartment)).thenThrow(DepartmentIsEmptyException.class);
+        Assertions.assertThrows(DepartmentIsEmptyException.class,
+                () -> departmentService.getMinByDepartment(ghostDepartment));
     }
 
     @Test
     public void shouldReturnCorrectMaxByDepartment() {
+        when(employeeServiceMock.getAllEmployeeByDepartment(realDepartment)).thenReturn(employeeList);
         Employee expected = new Employee("Michail", "Ivanov", 1, 5000);
-        Assertions.assertEquals(expected, departmentService.getMaxByDepartment(id));
+        Assertions.assertEquals(expected, departmentService.getMaxByDepartment(realDepartment));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenDepartmentNotExistWhenCalculatingMax() {
+        when(employeeServiceMock.getAllEmployeeByDepartment(ghostDepartment)).thenThrow(DepartmentIsEmptyException.class);
+        Assertions.assertThrows(DepartmentIsEmptyException.class,
+                () -> departmentService.getMaxByDepartment(ghostDepartment));
     }
 
 }

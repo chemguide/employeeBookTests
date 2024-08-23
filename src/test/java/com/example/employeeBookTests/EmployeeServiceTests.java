@@ -20,7 +20,7 @@ public class EmployeeServiceTests {
 
 
     @Test
-    public void shouldNotPrintEmployeeIfEmployeesIsNull() {
+    public void shouldThrowExceptionIfEmployeesIsNull() {
         Assertions.assertThrows(NoEmployeeInCompanyException.class,
                 () -> employeeService.getAllEmployee());
     }
